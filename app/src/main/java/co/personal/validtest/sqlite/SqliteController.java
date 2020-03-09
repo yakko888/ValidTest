@@ -5,6 +5,9 @@ import android.content.Context;
 
 import java.util.List;
 
+import co.personal.validtest.model.Artist;
+import co.personal.validtest.model.Picture;
+
 @SuppressWarnings("WeakerAccess")
 public class SqliteController {
 
@@ -16,14 +19,33 @@ public class SqliteController {
         sqliteHelper = new SqliteHelper(context);
     }
 
-    public boolean saveImage(String name, byte[] image){
-        ContentValues values = new ContentValues();
-        values.put(SqlitePicture.COL_USER_NAME,     name);
-        values.put(SqlitePicture.COL_USER_IMAGE,     image);
-
-        return sqliteHelper.insertData(SqlitePicture.TABLE_PICTURE, values);
+    public int getDataExistSqlite() {
+        return sqliteHelper.getCountData();
     }
 
 
+    public boolean checkExistBDSqlite() {
+        return sqliteHelper.checkExistBdSqlite();
+    }
+
+    public boolean saveToSqlite(List<Picture> data) {
+        ContentValues values = new ContentValues();
+        int i = 0;
+        while (i < data.size()) {
+            values.put(SqlitePicture.COL_PICTURE_NAME, data.get(i).getName());
+            values.put(SqlitePicture.COL_PICTURE_IMAGE_URL, data.get(i).getImage());
+            i = i + 1;
+            sqliteHelper.insertData(SqlitePicture.TABLE_PICTURE, values);
+        }
+
+        if (i == data.size()) {
+            return true;
+        }
+        return false;
+    }
+
+    public List getAllDataSqlite() {
+        return sqliteHelper.getAllData();
+    }
 }
 

@@ -4,5 +4,8 @@ import java.util.List;
 
 public interface MainView {
 
-    void getDataService1(List mTopartists);
+    void getDataReciclerView(List mTopartists);
+    void showMessage(String message);
+    void showProgressBar();
+    void hideProgressBar();
 }

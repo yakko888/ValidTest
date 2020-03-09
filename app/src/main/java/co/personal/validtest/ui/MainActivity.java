@@ -1,9 +1,11 @@
 package co.personal.validtest.ui;
+import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     ActivityMainBinding mBinding;
     MainPresenter mPresenter;
+    public List mData;
+    ProgressDialog pd;
 
     @Inject
     public Retrofit mRetrofit;
@@ -46,13 +50,34 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void getDataService1(List artistList) {
-        List mData = new ArrayList(artistList);
+    public void getDataReciclerView(List artistList) {
+        mData = new ArrayList(artistList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
         ArtistAdapter adapter = new ArtistAdapter(this, mData);
         recyclerView.setAdapter(adapter);
+
+        //guardado en sqlite
+        if(mPresenter.getDataSqlite()<=0){
+            mPresenter.saveDataToSqlite(mData);
+            Toast.makeText(this,"Datos guardados en el sqlite",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showProgressBar() {
+        mBinding.prgDialog.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        mBinding.prgDialog.setVisibility(View.INVISIBLE);
     }
 }
 

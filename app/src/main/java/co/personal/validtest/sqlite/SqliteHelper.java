@@ -2,9 +2,17 @@ package co.personal.validtest.sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import co.personal.validtest.model.Artist;
+import co.personal.validtest.model.Picture;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -22,13 +30,13 @@ public class SqliteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        /*db.execSQL(SqlitePicture.DB_USER);*/
-
+        db.execSQL(SqlitePicture.DB_PICTURE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + SqlitePicture.DB_PICTURE);
+        onCreate(db);
     }
 
     public boolean insertData(String table, ContentValues values) {
@@ -41,5 +49,47 @@ public class SqliteHelper extends SQLiteOpenHelper {
             Log.d(TAG, "datos guardados exitosamente");
             return true;
         }
+    }
+
+    public int getCountData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT *from picture",null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
+    public boolean checkExistBdSqlite() {
+        SQLiteDatabase checkDB = null;
+        String database_path = PATH + DATABASE_NAME;
+        try {
+            checkDB = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READONLY);
+            checkDB.close();
+        } catch (SQLiteException e) {
+            //Log.e("Error", "No existe la base de datos " + .getMessage());
+        }
+        return checkDB != null;
+    }
+
+    public  ArrayList<Picture> getAllData() {
+
+        ArrayList<Picture> datos = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT *from picture",null);
+        if (cursor.moveToFirst()) {
+            do {
+                datos.add(new Picture(cursor.getString(1),
+                        cursor.getString(2)));
+            } while(cursor.moveToNext());
+            cursor.close();
+
+        }
+        db.close();
+        return datos;
     }
 }

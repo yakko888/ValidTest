@@ -18,13 +18,14 @@ import java.util.List;
 
 import co.personal.validtest.R;
 import co.personal.validtest.model.Artist;
+import co.personal.validtest.model.Picture;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
     private List mData;
     private Context mContext;
     private LayoutInflater mInflater;
 
-    public ArtistAdapter(Context context, List<Artist> data) {
+    public ArtistAdapter(Context context, List<Picture> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.mContext = context;
@@ -39,19 +40,18 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ArtistAdapter.ViewHolder holder, int position) {
 
-        Artist artistitem = (Artist) mData.get(position);
+        Picture artistitem = (Picture) mData.get(position);
 
         try {
             holder.item_name.setText(artistitem.getName());
-            holder.item_url.setText(artistitem.getUrl());
+            holder.item_url.setText(artistitem.getImage());
             Linkify.addLinks(holder.item_url, Linkify.WEB_URLS);
 
             final ImageView imageView = holder.item_image;
-            String imageURL = artistitem.getUrl();
+            String imageURL = artistitem.getImage();
 
             Picasso.with(mContext)
                     .load(R.drawable.img_empty)
-                    .centerInside()
                     .into(imageView, new Callback() {
                 @Override
                 public void onSuccess() {
